@@ -21,7 +21,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
+    "commit": "git-cz",
     "eject": "react-scripts eject",
     "prepare": "husky install",
     "lint": "eslint . --ext .ts",
@@ -50,13 +51,21 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.16.7",
+    "@commitlint/cli": "^16.2.3",
+    "@commitlint/config-conventional": "^16.2.1",
     "@types/jest": "^27.4.1",
-    "cz-conventional-changelog": "3.3.0",
+    "cz-conventional-changelog": "^3.3.0",
     "jest": "^28.0.2"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   }
 }
