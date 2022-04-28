@@ -1,61 +1,155 @@
-# Getting Started with Create React App
+![blog-img-husky](https://user-images.githubusercontent.com/57900722/165662166-ea3e94db-7a46-4623-be81-223acba59155.png)
 
-This project was bootstrapped with
-[Create React App](https://github.com/facebook/create-react-app).
+# React + Typescript + Eslint + Prettier + Husky + commitLint starter boilerplate
 
-## Available Scripts
+This repo already contains all these tools pre-configure, just clone it and get
+started with it
 
-In the project directory, you can run:
+```bash
+git clone https://github.com/othmanekahtal/react-ts-with-husky-commitlint.git && cd react-ts-with-husky-commitlint && yarn
+```
 
-### `yarn start`
+## Create your own config :
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The first of all, you will create your react application ⚛️:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```bash
+yarn create react-app app-name --template typescript
+```
 
-### `yarn test`
+**Note:** You can create your application react with pre-configure with redux or
+react-router [for more info](https://create-react-app.dev/docs/custom-templates)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests)
-for more information.
+now after create your react app, we add husky to project and configure it :
 
-### `yarn build`
+```bash
+npx husky-init && yarn
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best
-performance.
+after that husky create a folder `.husky/` that contains `pre-commit` file, This
+file by default run :
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+ npm test
+```
 
-See the section about
-[deployment](https://facebook.github.io/create-react-app/docs/deployment) for
-more information.
+you add all scripts you want be run before you commit your changes :
 
-### `yarn eject`
+**Tips:** `pre-commit` file run as bash executable, you can add a
+functions,conditions and more [check this !](.husky/pre-commit)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+now your config almost done, we just need to add prettier for formatting your
+code :
 
-If you aren’t satisfied with the build tool and configuration choices, you can
-`eject` at any time. This command will remove the single build dependency from
-your project.
+```bash
+yarn add prettier -D
+```
 
-Instead, it will copy all the configuration files and the transitive
-dependencies (webpack, Babel, ESLint, etc) right into your project so you have
-full control over them. All of the commands except `eject` will still work, but
-they will point to the copied scripts so you can tweak them. At this point
-you’re on your own.
+in root folder create `.prettierrc` file and put your rules
+[check all rules here](https://prettier.io/docs/en/options.html) and install
+prettier exention in your vscode, it's great addition
 
-You don’t have to ever use `eject`. The curated feature set is suitable for
-small and middle deployments, and you shouldn’t feel obligated to use this
-feature. However we understand that this tool wouldn’t be useful if you couldn’t
-customize it when you are ready for it.
+you can configure your prettier to format your code on save ,just add this rule
+in your vscode :
 
-## Learn More
+```json
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
+}
+```
 
-You can learn more in the
-[Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+all we need to finished is commitLint:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+yarn add commitizen @commitlint/cli cz-conventional-changelog @commitlint/config-conventional -D
+```
+
+Add this configuration in your `package.json` :
+
+```json
+"config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+```
+
+create commitlint.config.js file in your root folder
+
+```json
+module.exports = {
+  /*
+  * Resolve and load @commitlint/config-conventional from node_modules.
+  * Referenced packages must be installed
+  */
+	extends: ['@commitlint/config-conventional'],
+	/*
+	 * Any rules defined here will override rules from @commitlint/config-conventional
+	 */
+	rules: {
+		'type-enum': [
+			2,
+			'always',
+			['build', 'chore', 'ci', 'docs', 'improvement', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test'],
+		],
+	},
+};
+```
+
+add in `package.json`:
+
+```json
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "jest",
+    "commit": "git-cz",
+    "eject": "react-scripts eject",
+    "prepare": "husky install",
+    "lint": "eslint . --ext .ts",
+    "check-types": "tsc --pretty --noEmit",
+    "check-lint": "eslint . --ext ts --ext tsx --ext js",
+    "prettier-write": "prettier --write .",
+    "check-format": "prettier --check ."
+  },
+```
+
+it's finished, you can add this great addition in husky `pre-commit` file:
+
+```bash
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+
+echo '😒😒😒😒wait a minute, we format your code 😒😒😒😒'
+
+yarn prettier-write
+
+yarn check-format ||
+(
+    echo '🤢🤮🤢🤮 Your styling looks disgusting. 🤢🤮🤢🤮'
+    false;
+)
+# Check tsconfig standards
+yarn check-types ||
+(
+    echo '🤡😂❌🤡 Failed Type check.Are you seriously trying to write that? Make the changes required above.🤡😂❌🤡'
+    false;
+)
+# If everything passes... Now we can commit
+echo '🤔🤔🤔🤔... Alright.... Code looks good to me... Trying to build now. 🤔🤔🤔🤔'
+yarn build ||
+(
+    echo '❌👷🔨❌ What I say to you What I say to you ❌👷🔨❌'
+    false;
+)
+# If everything passes... Now we can commit
+echo '✅✅✅✅ You win this time... I am committing this now. ✅✅✅✅'
+
+```

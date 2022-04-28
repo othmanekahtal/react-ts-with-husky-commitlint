@@ -2,26 +2,24 @@
 . "$(dirname "$0")/_/husky.sh"
 
 
-yarn run prettier-write ||
-(
-    echo '🤢🤮🤢🤮 Your styling looks disgusting. 🤢🤮🤢🤮'
-    false;
-)
+echo '😒😒😒😒wait a minute, we format your code 😒😒😒😒'
 
-yarn run check-format ||
+yarn prettier-write
+
+yarn check-format ||
 (
     echo '🤢🤮🤢🤮 Your styling looks disgusting. 🤢🤮🤢🤮'
     false;
 )
 # Check tsconfig standards
-yarn run check-types ||
+yarn check-types ||
 (
     echo '🤡😂❌🤡 Failed Type check.Are you seriously trying to write that? Make the changes required above.🤡😂❌🤡'
     false;
 )
 # If everything passes... Now we can commit
 echo '🤔🤔🤔🤔... Alright.... Code looks good to me... Trying to build now. 🤔🤔🤔🤔'
-yarn run build ||
+yarn build ||
 (
     echo '❌👷🔨❌ What I say to you What I say to you ❌👷🔨❌'
     false;

@@ -1,5 +1,5 @@
 {
-  "name": "easytest-ts",
+  "name": "react-ts-with-husky-commitlint",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -64,8 +64,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "pre-commit": "lint-staged"
     }
   }
 }
