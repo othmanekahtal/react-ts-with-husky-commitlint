@@ -82,7 +82,7 @@ Add this configuration in your `package.json` :
 
 create commitlint.config.js file in your root folder
 
-```json
+```javascript
 module.exports = {
   /*
   * Resolve and load @commitlint/config-conventional from node_modules.
